@@ -43,6 +43,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -57,6 +58,7 @@ import org.bukkit.util.BlockIterator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +69,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GriefPrevention extends JavaPlugin
 {
@@ -999,6 +1002,20 @@ public class GriefPrevention extends JavaPlugin
         {
             return null;
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
+        if (cmd.getName().equalsIgnoreCase("trust")) {
+            return this.getServer().getOnlinePlayers().stream()
+                    .map(HumanEntity::getName)
+                    .collect(Collectors.toList());
+        }
+
+        return result;
     }
 
     //handles slash commands
