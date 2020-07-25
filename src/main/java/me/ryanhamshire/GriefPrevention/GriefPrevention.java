@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -83,7 +84,7 @@ public class GriefPrevention extends JavaPlugin
     public DataStore dataStore;
 
     //this tracks item stacks expected to drop which will need protection
-    ArrayList<PendingItemProtection> pendingItemWatchList = new ArrayList<PendingItemProtection>();
+    ArrayList<PendingItemProtection> pendingItemWatchList = new ArrayList<>();
 
     //log entry manager for GP's custom log files
     CustomLogger customLogger;
@@ -1007,15 +1008,27 @@ public class GriefPrevention extends JavaPlugin
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args)
     {
-        ArrayList<String> result = new ArrayList<>();
-
-        if (cmd.getName().equalsIgnoreCase("trust")) {
-            return this.getServer().getOnlinePlayers().stream()
-                    .map(HumanEntity::getName)
-                    .collect(Collectors.toList());
+        if (Pattern.matches("^([a-z]+)?trust$", cmd.getName().toLowerCase())) {
+            switch (args.length) {
+                case 1:
+                    return this.getServer().getOnlinePlayers().stream()
+                            .map(HumanEntity::getName)
+                            .collect(Collectors.toList());
+            }
         }
 
-        return result;
+        if (Pattern.matches("^(adjustbonus|setaccrued)claimblocks$", cmd.getName().toLowerCase())) {
+            switch (args.length) {
+                case 1:
+                    return this.getServer().getOnlinePlayers().stream()
+                            .map(HumanEntity::getName)
+                            .collect(Collectors.toList());
+                case 2:
+                    return Collections.singletonList("<amount>");
+            }
+        }
+
+        return null;
     }
 
     //handles slash commands
